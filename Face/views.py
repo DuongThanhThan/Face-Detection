@@ -38,9 +38,18 @@ def update_user(user : Face_Detection):
             return "User ID does not exist"
     else:
         return "Missing user id"
+    
+def delete_user(user_id):
+    if check_user_exist(user_id = user_id):
+        old_user = Face_Detection.objects.get(user_id = user_id)
+
+        old_user.delete()
+        return "Users have been successfully delete"
+    else:
+        return "User ID does not exist"
 
 user = Face_Detection(user_id = 10000, full_name = "Trần Văn B", email = "")
 
-old_user = update_user(user = user)
+old_user = delete_user(user_id = 10000)
 
 print(old_user)
