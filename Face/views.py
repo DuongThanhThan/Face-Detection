@@ -91,6 +91,7 @@ class CUD_User(ViewSet):
             user.delete()
             response_data = {
                 'message':'Success',
+                'data':'Mất tiêu luôn'
             }
             return Response(response_data, status=status.HTTP_200_OK)
 
