@@ -25,7 +25,6 @@ class Face_Detection(models.Model):
         }
         return json.dumps(db,indent = 6)
     
-    
 class Time(models.Model):
     _id = models.ObjectIdField()
     user_id  = models.CharField(null = False, blank = False, max_length = 50)
