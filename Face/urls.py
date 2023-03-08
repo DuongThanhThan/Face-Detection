@@ -1,6 +1,10 @@
 
 from django.urls import path, include
 from . import views
+from .views import CUD_User
+
 urlpatterns = [
-    path('',views.check_user_exist,name='index'),
+    path('create/', CUD_User.as_view({'post': 'create'}), name='create'),
+    path('update/', CUD_User.as_view({'patch': 'update'}), name='update'),
+    path('delete/', CUD_User.as_view({'delete': 'delete'}), name='delete'),
 ]
