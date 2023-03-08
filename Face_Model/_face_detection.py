@@ -16,13 +16,11 @@ def prewhiten(x):
     y = np.multiply(np.subtract(x, mean), 1 / std_adj)
     return y
 
-
 def to_rgb(img):
     w, h = img.shape
     ret = np.empty((w, h, 3), dtype=np.uint8)
     ret[:, :, 0] = ret[:, :, 1] = ret[:, :, 2] = img
     return ret
-
 
 def get_model_filenames(model_dir):
     files = os.listdir(model_dir)
@@ -43,7 +41,6 @@ def get_model_filenames(model_dir):
                 ckpt_file = step_str.groups()[0]
     return meta_file, ckpt_file
 
-
 def make_image_tensor(img, image_size, do_prewhiten=True):
     image = np.zeros((1, image_size, image_size, 3))
     if img.ndim == 2:
@@ -52,7 +49,6 @@ def make_image_tensor(img, image_size, do_prewhiten=True):
         img = prewhiten(img)
     image[0, :, :, :] = img
     return image
-
 
 def make_images_tensor(img1, img2, image_size, do_prewhiten=True):
     images = np.zeros((2, image_size, image_size, 3))
@@ -63,7 +59,6 @@ def make_images_tensor(img1, img2, image_size, do_prewhiten=True):
             img = prewhiten(img)
         images[i, :, :, :] = img
     return images
-
 
 def load_model(model, session):
     model_exp = os.path.expanduser(model)
@@ -77,7 +72,6 @@ def load_model(model, session):
 
         saver = tf.train.import_meta_graph(os.path.join(model_exp, meta_file))
         saver.restore(session, os.path.join(model_exp, ckpt_file))
-
 
 class Verification:
     def __init__(self):
@@ -115,7 +109,6 @@ class Verification:
 
         return np.squeeze(emb_array)
 
-
 class FaceDetection:
 
     # Modify the verification_threshold incase you want to edit 
@@ -141,7 +134,7 @@ class FaceDetection:
         return v
 
     @staticmethod
-    def is_same(emb1, emb2):
+    def compare(emb1, emb2):
         diff = np.subtract(emb1, emb2)
         diff = np.sum(np.square(diff))
         return diff < FaceDetection.verification_threshold, diff
@@ -166,10 +159,9 @@ class FaceDetection:
                 x2 = int(detections[0, 0, i, 5] * width)
                 y2 = int(detections[0, 0, i, 6] * height)
                 faces.append([x1, y1, x2 - x1, y2 - y1])
-
-                # cv2.rectangle(image, (x1, y1), (x2, y2), (255, 0, 0), 2)
-                # cv2.imshow("img", image)
-                # cv2.waitKey(0)
+                cv2.rectangle(image, (x1, y1), (x2, y2), (255, 0, 0), 2)
+                cv2.imshow("img", image)
+                cv2.waitKey(0)
 
         if len(faces) == 1:
             face = faces[0]
@@ -196,7 +188,7 @@ class FaceDetection:
         img2_emb = FaceDetection.fetch_embeddings(image2)
 
         if img1_emb is not None and img2_emb is not None:
-            response = FaceDetection.is_same(img1_emb, img2_emb)
+            response = FaceDetection.compare(img1_emb, img2_emb)
             return {"response": "API result", "verified": str(response[0]), "accuracy": response[1]}
 
         cv2.destroyAllWindows()
