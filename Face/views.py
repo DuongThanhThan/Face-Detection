@@ -1,55 +1,103 @@
 from .models import Face_Detection,Time
 from .helper import time_helper
+from rest_framework.viewsets import ViewSet
+from rest_framework.request import Request
+from .seializers import CreateUserValidator, UpdateUserValidator
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.decorators import action
 
-def check_user_exist(user_id):
-    check = Face_Detection.objects.filter(user_id = user_id)
-    if check:
-        return True
-    else:
-        return False
-    
 
-def create_user(user : Face_Detection):
-    if check_user_exist(user_id= user.user_id):
-        return "User ID already exists"
-    else:
-        if user.full_name:
-            user.created_time = time_helper.now_datetime()
-            Face_Detection.objects.create(user_id = user.user_id, full_name = user.full_name, email = user.email, image = user.image, created_time = user.created_time)
-            return "User has been successfully initialized"
-        else:
-            return "Full name cannot be empty"
+
+
+class CUD_User(ViewSet):
+
+    @action('POST', True)
+    def create(self, request: Request):
+        try:
+            data = request.data
+            data_serializer = CreateUserValidator(data=data)
+
+            if not data_serializer.is_valid():
+                return Response(data_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
+            created_time = time_helper.now_datetime()
+            Face_Detection.objects.create(**data_serializer.validated_data, created_time = created_time)
+
+            response_data = {
+                'message': 'Success',
+                'data': data_serializer.validated_data
+            }        
+            return Response(response_data)
+        except Exception as e:
+            response_data = {
+                'message': 'Error',
+                'data':str(e)
+            }
+            return Response(response_data)
         
-def update_user(user : Face_Detection):
 
-    if user.user_id:
-        if check_user_exist(user_id= user.user_id):
-            old_user = Face_Detection.objects.get(user_id = user.user_id)
+    @action('PATCH', True)
+    def update(self, request: Request):
+        try:
+            data = request.data
+            data_serializer = UpdateUserValidator(data=data)
 
-            if user.full_name:
-                old_user.full_name = user.full_name
-            if user.email:
-                old_user.email = user.email
-            if user.image:
-                old_user.image = user.image
-            old_user.save()
-            return "Users have been successfully updated"
-        else:
-            return "User ID does not exist"
-    else:
-        return "Missing user id"
-    
-def delete_user(user_id):
-    if check_user_exist(user_id = user_id):
-        old_user = Face_Detection.objects.get(user_id = user_id)
+            if not data_serializer.is_valid():
+                return Response(data_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        old_user.delete()
-        return "Users have been successfully delete"
-    else:
-        return "User ID does not exist"
+            data_serializer = data_serializer.validated_data
 
-user = Face_Detection(user_id = 10000, full_name = "Trần Văn B", email = "")
+            old_data = Face_Detection.objects.get(user_id = data_serializer.get("user_id"))
+            print(old_data)
 
-old_user = delete_user(user_id = 10000)
+            old_data.email = old_data.email if old_data.email else data_serializer.get("email")
+            old_data.full_name = old_data.full_name if old_data.full_name else data_serializer.get("full_name")
+            old_data.image = old_data.image if old_data.image else data_serializer.get("image")
 
-print(old_user)
+            old_data.save()
+
+            response_data = {
+                'message': 'Success',
+                'data': data_serializer
+            }        
+            return Response(response_data)
+
+        except Exception as e:
+            response_data = {
+                'message': 'Error',
+                'data': str(e)
+            }
+            return Response(response_data)
+        
+    @action('delete', True)
+    def delete(self, request: Request):
+        try:
+            data = request.data
+
+            user_id = data.get("user_id")
+            
+
+
+            if not user_id:
+                response_data = {
+                    'message':'Error',
+                    'data':"not exist"
+                }
+                return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
+            
+            user = Face_Detection.objects.get(user_id = user_id)
+
+            user.delete()
+            response_data = {
+                'message':'Success',
+            }
+            return Response(response_data, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            response_data = {
+                'message': 'Error',
+                'data': str(e)
+            }
+            return Response(response_data)
+
