@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'Face',
+    'apps.Face',
 
 ]
 
@@ -53,7 +53,7 @@ MIDDLEWARE = [
 
 ]
 
-ROOT_URLCONF = 'Face_Django.urls'
+ROOT_URLCONF = 'Face_backend.urls'
 
 TEMPLATES = [
     {
@@ -71,7 +71,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'Face_Django.wsgi.application'
+WSGI_APPLICATION = 'Face_backend.wsgi.application'
 
 
 # Database

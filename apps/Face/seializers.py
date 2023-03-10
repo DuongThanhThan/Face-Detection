@@ -9,8 +9,21 @@ class CreateUserValidator(serializers.Serializer):
     full_name = serializers.CharField(max_length=255, required=True)
 <<<<<<< HEAD:Face/seializers.py
 =======
+<<<<<<< HEAD:apps/Face/seializers.py
+<<<<<<< HEAD:apps/Face/seializers.py
+    # image = serializers.CharField(required = True)
+=======
+>>>>>>> 6680004 (new version):Face/seializers.py
+=======
+>>>>>>> dev:apps/Face/seializers.py
+<<<<<<< HEAD:Face/seializers.py
+=======
     # image = serializers.CharField(required = True)
 >>>>>>> 2257d60 (image upload):apps/Face/seializers.py
+<<<<<<< HEAD:Face/seializers.py
+=======
+>>>>>>> 41f34ff (update):Face/seializers.py
+>>>>>>> dev:apps/Face/seializers.py
     email = serializers.EmailField()
 
 
