@@ -1,5 +1,7 @@
 import json
 from djongo import models
+from django import forms
+
 
 
 # Create your models here.
@@ -8,7 +10,7 @@ class Face_Detection(models.Model):
     user_id  = models.IntegerField()
     full_name = models.CharField(max_length = 150)
     email = models.CharField(null = True, blank = True, max_length = 150)
-    image = models.CharField(null = True, blank = True, max_length = 150)
+    image = models.TextField()
     created_time = models.CharField(null = True, blank = True, max_length = 150)
     
     class Meta:

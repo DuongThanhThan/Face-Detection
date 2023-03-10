@@ -40,12 +40,7 @@ class CGUD_User(ViewSet):
             #---------------------------------------------
 
             created_time = time_helper.now_datetime()
-<<<<<<< HEAD:apps/Face/views.py
-<<<<<<< HEAD:apps/Face/views.py
-=======
-=======
 <<<<<<< HEAD:Face/views.py
->>>>>>> 41f34ff (update):Face/views.py
             user = Face_Detection(**data_serializer.validated_data)
 
             user.image = str(img_enc.tolist())
@@ -54,12 +49,8 @@ class CGUD_User(ViewSet):
             user.created_time = created_time
 
             user.save()
-<<<<<<< HEAD:apps/Face/views.py
->>>>>>> 6680004 (new version):Face/views.py
-=======
 =======
 >>>>>>> 2257d60 (image upload):apps/Face/views.py
->>>>>>> 41f34ff (update):Face/views.py
 
             image_user = data.get("image").read()
             nparr = np.frombuffer(image_user, np.uint8)
