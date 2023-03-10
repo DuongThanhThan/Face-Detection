@@ -9,5 +9,5 @@ def get_id(img_path) :
 if __name__ == '__main__':
     import os
     parent = parent = os.path.join(os.getcwd(), os.pardir)
-    parent_path = os.path.abspath(parent)
-    print(get_id(parent_path+"/Face_Model/input/test.mp4"))
+    parent_dir = os.path.abspath(parent)
+    print(get_id(parent_dir+"/Face_Model/input/test.mp4"))
