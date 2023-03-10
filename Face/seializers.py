@@ -7,13 +7,14 @@ import re
 class CreateUserValidator(serializers.Serializer):
     user_id = serializers.IntegerField(required=True)
     full_name = serializers.CharField(max_length=255, required=True)
-    image = serializers.CharField(required = True)
     email = serializers.EmailField()
 
 
     class Meta:
         model = Face_Detection
-
+        fields = ['user_id',
+              'full_name',
+              'email',]
         
     def validate(self, data):
         if data['user_id']:

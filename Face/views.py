@@ -1,11 +1,16 @@
 from .models import Face_Detection,Time
-from .helper import time_helper
+from .helper import time_helper, image_helper
 from rest_framework.viewsets import ViewSet
 from rest_framework.request import Request
 from .seializers import CreateUserValidator, UpdateUserValidator
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
+
+import numpy as np
+import cv2
+import face_recognition
+import simplejson as json
 
 
 
@@ -21,8 +26,23 @@ class CUD_User(ViewSet):
             if not data_serializer.is_valid():
                 return Response(data_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             
+            image_user = request.data.get("image").read()
+            nparr = np.frombuffer(image_user, np.uint8)
+
+            # Sau này thay vào bằng cách biến đổi vector 128 chiều của Phát
+            img = cv2.imdecode(nparr, 1)
+            img_enc = face_recognition.face_encodings(img)[0]
+            #---------------------------------------------
+
             created_time = time_helper.now_datetime()
-            Face_Detection.objects.create(**data_serializer.validated_data, created_time = created_time)
+            user = Face_Detection(**data_serializer.validated_data)
+
+            user.image = str(img_enc.tolist())
+
+
+            user.created_time = created_time
+
+            user.save()
 
             response_data = {
                 'message': 'Success',
@@ -93,6 +113,52 @@ class CUD_User(ViewSet):
                 'message':'Success',
                 'data':'Mất tiêu luôn'
             }
+            return Response(response_data, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            response_data = {
+                'message': 'Error',
+                'data': str(e)
+            }
+            return Response(response_data)
+        
+
+
+class User(ViewSet):
+    @action('get', True)
+    def get(self, request: Request):
+        try:
+            data = request.data
+            
+
+            user_id = data.get("user_id")
+            
+
+
+            if not user_id:
+                response_data = {
+                    'message':'Error',
+                    'data':"not exist"
+                }
+                return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
+            
+            user = Face_Detection.objects.get(user_id = user_id)
+
+            json_data = {
+                "user_id": user.user_id,
+                "full_name": user.full_name,
+                "email": user.email,
+                "image": image_helper.list_image(str(user.image)),
+                "created_time": user.created_time
+
+            }
+
+
+            response_data = {
+                'message':'Success',
+                'data': json_data
+            }
+
             return Response(response_data, status=status.HTTP_200_OK)
 
         except Exception as e:
