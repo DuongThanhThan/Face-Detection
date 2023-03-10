@@ -7,6 +7,10 @@ import re
 class CreateUserValidator(serializers.Serializer):
     user_id = serializers.IntegerField(required=True)
     full_name = serializers.CharField(max_length=255, required=True)
+<<<<<<< HEAD:Face/seializers.py
+=======
+    # image = serializers.CharField(required = True)
+>>>>>>> 2257d60 (image upload):apps/Face/seializers.py
     email = serializers.EmailField()
 
 
@@ -38,3 +42,5 @@ class UpdateUserValidator(serializers.Serializer):
             if not user_id_exist_check:
                 raise serializers.ValidationError("User does not exist")
             return data
+        
+    
