@@ -72,18 +72,21 @@ class CGUD_User(ViewSet):
             
         
             user = Face_Detection.objects.get(user_id = user_id)
-            
-            main_data = {
-                "user_id":data.get("user_id"),
-                "full_name":user.full_name,
-                "email":user.email,
-                "created_time":user.created_time
-            }
 
             image = user.image
 
             #List image
             list_image_128 = image_helper.list_image(str(image))
+            
+            main_data = {
+                "user_id":data.get("user_id"),
+                "full_name":user.full_name,
+                "email":user.email,
+                "image": list_image_128,
+                "created_time":user.created_time
+            }
+
+
 
             response_data = {
                 'message':'Success',
